@@ -135,6 +135,14 @@ extension LocationManager: CLLocationManagerDelegate {
         }
     }
 
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        // Required by requestLocation() — ignore kCLErrorLocationUnknown (transient, iOS retries)
+        let clError = error as? CLError
+        if clError?.code != .locationUnknown {
+            print("Location error: \(error)")
+        }
+    }
+
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
         print("Geofence monitoring failed for \(region?.identifier ?? "unknown"): \(error)")
     }
