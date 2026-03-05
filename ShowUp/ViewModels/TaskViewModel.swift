@@ -19,11 +19,12 @@ final class TaskViewModel {
     // Settings
     var geofenceRadius: Double = 150
     var gracePeriodEnabled: Bool = true
-    var liveActivitiesEnabled: Bool = (UserDefaults.standard.object(forKey: "liveActivitiesEnabled") as? Bool) ?? true {
-        didSet {
-            UserDefaults.standard.set(liveActivitiesEnabled, forKey: "liveActivitiesEnabled")
-            if !liveActivitiesEnabled { liveActivity.endAll() }
-        }
+    var liveActivitiesEnabled: Bool = (UserDefaults.standard.object(forKey: "liveActivitiesEnabled") as? Bool) ?? true
+
+    func setLiveActivitiesEnabled(_ enabled: Bool) {
+        liveActivitiesEnabled = enabled
+        UserDefaults.standard.set(enabled, forKey: "liveActivitiesEnabled")
+        if !enabled { liveActivity.endAll() }
     }
 
     init(locationManager: LocationManager, notificationManager: NotificationManager, modelContext: ModelContext) {

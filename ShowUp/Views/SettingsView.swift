@@ -82,7 +82,7 @@ struct SettingsView: View {
                                 subtitle: "Show timer in Dynamic Island & Lock Screen",
                                 isOn: Binding(
                                     get: { viewModel.liveActivitiesEnabled },
-                                    set: { viewModel.liveActivitiesEnabled = $0 }
+                                    set: { viewModel.setLiveActivitiesEnabled($0) }
                                 )
                             )
                         }
