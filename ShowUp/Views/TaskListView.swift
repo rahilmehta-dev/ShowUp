@@ -62,9 +62,9 @@ struct TaskListView: View {
             }
             .navigationBarHidden(true)
             .sheet(isPresented: $showAddTask) {
-                AddTaskView { task in
+                AddTaskView(onSave: { task in
                     viewModel.addTask(task)
-                }
+                })
             }
         }
     }

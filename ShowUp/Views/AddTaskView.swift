@@ -5,7 +5,8 @@ struct AddTaskView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(TaskViewModel.self) private var viewModel
 
-    let onSave: (ShowUpTask) -> Void
+    var taskToEdit: ShowUpTask? = nil
+    var onSave: ((ShowUpTask) -> Void)? = nil
 
     @State private var taskName = ""
     @State private var searchText = ""
@@ -20,6 +21,11 @@ struct AddTaskView: View {
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         )
     )
+    // Holds the existing coordinate when editing (before any new location is searched)
+    @State private var existingCoordinate: CLLocationCoordinate2D?
+    @State private var existingLocationName: String = ""
+
+    private var isEditing: Bool { taskToEdit != nil }
 
     private let durations: [(String, TimeInterval)] = [
         ("15 min", 900),
@@ -120,6 +126,35 @@ struct AddTaskView: View {
 
                                     Map(position: $mapPosition) {
                                         Annotation(location.name ?? "", coordinate: location.placemark.coordinate) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color.red.opacity(0.2))
+                                                    .frame(width: 120, height: 120)
+                                                Circle()
+                                                    .stroke(Color.red.opacity(0.4), lineWidth: 1)
+                                                    .frame(width: 120, height: 120)
+                                                Image(systemName: "mappin.circle.fill")
+                                                    .font(.system(size: 24))
+                                                    .foregroundColor(.red)
+                                            }
+                                        }
+                                    }
+                                    .frame(height: 180)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .disabled(true)
+                                }
+                            } else if let coord = existingCoordinate {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    HStack {
+                                        Image(systemName: "mappin.circle.fill")
+                                            .foregroundColor(.red)
+                                        Text(existingLocationName)
+                                            .font(.system(size: 14, weight: .medium))
+                                            .foregroundColor(.white)
+                                    }
+
+                                    Map(position: $mapPosition) {
+                                        Annotation(existingLocationName, coordinate: coord) {
                                             ZStack {
                                                 Circle()
                                                     .fill(Color.red.opacity(0.2))
@@ -254,7 +289,7 @@ struct AddTaskView: View {
                     .padding(.top, 20)
                 }
             }
-            .navigationTitle("New Task")
+            .navigationTitle(isEditing ? "Edit Task" : "New Task")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -262,11 +297,25 @@ struct AddTaskView: View {
                         .foregroundColor(.white)
                 }
             }
+            .onAppear {
+                guard let task = taskToEdit else { return }
+                taskName = task.name
+                searchText = task.locationName
+                selectedDuration = task.requiredDuration
+                selectedColorHex = task.colorHex
+                existingCoordinate = task.coordinate
+                existingLocationName = task.locationName
+                mapPosition = .region(MKCoordinateRegion(
+                    center: task.coordinate,
+                    span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+                ))
+            }
         }
     }
 
     private var canSave: Bool {
-        !taskName.trimmingCharacters(in: .whitespaces).isEmpty && selectedLocation != nil
+        !taskName.trimmingCharacters(in: .whitespaces).isEmpty &&
+        (selectedLocation != nil || existingCoordinate != nil)
     }
 
     private func performSearch() {
@@ -293,18 +342,31 @@ struct AddTaskView: View {
     }
 
     private func saveTask() {
-        guard let location = selectedLocation,
-              let coord = location.placemark.location?.coordinate else { return }
-
-        let task = ShowUpTask(
-            name: taskName.trimmingCharacters(in: .whitespaces),
-            locationName: location.name ?? searchText,
-            latitude: coord.latitude,
-            longitude: coord.longitude,
-            requiredDuration: selectedDuration,
-            colorHex: selectedColorHex
-        )
-        onSave(task)
-        dismiss()
+        if let task = taskToEdit {
+            task.name = taskName.trimmingCharacters(in: .whitespaces)
+            task.requiredDuration = selectedDuration
+            task.colorHex = selectedColorHex
+            if let location = selectedLocation,
+               let coord = location.placemark.location?.coordinate {
+                task.locationName = location.name ?? searchText
+                task.latitude = coord.latitude
+                task.longitude = coord.longitude
+            }
+            viewModel.updateTask(task)
+            dismiss()
+        } else {
+            guard let location = selectedLocation,
+                  let coord = location.placemark.location?.coordinate else { return }
+            let task = ShowUpTask(
+                name: taskName.trimmingCharacters(in: .whitespaces),
+                locationName: location.name ?? searchText,
+                latitude: coord.latitude,
+                longitude: coord.longitude,
+                requiredDuration: selectedDuration,
+                colorHex: selectedColorHex
+            )
+            onSave?(task)
+            dismiss()
+        }
     }
 }

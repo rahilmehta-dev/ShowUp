@@ -220,6 +220,9 @@ struct TaskDetailView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .sheet(isPresented: $showEditSheet) {
+            AddTaskView(taskToEdit: task)
+        }
         .alert("Delete Task", isPresented: $showDeleteAlert) {
             Button("Delete", role: .destructive) {
                 viewModel.deleteTask(task)
