@@ -2,6 +2,8 @@
 
 > Tasks only auto-complete when you physically show up — and stay.
 
+> ⚡ Vibe coded with [Claude Code](https://claude.ai/code)
+
 ShowUp is an iOS 17+ app that tracks location-based habits. No manual check-offs. You enter a geofenced zone, the timer starts, and when you've stayed long enough the task completes itself.
 
 ---
