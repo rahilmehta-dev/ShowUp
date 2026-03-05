@@ -24,7 +24,14 @@ final class TaskViewModel {
     func setLiveActivitiesEnabled(_ enabled: Bool) {
         liveActivitiesEnabled = enabled
         UserDefaults.standard.set(enabled, forKey: "liveActivitiesEnabled")
-        if !enabled { liveActivity.endAll() }
+        if !enabled {
+            liveActivity.endAll()
+        } else {
+            // User re-enabled while already inside a zone — restart immediately
+            for task in tasks where task.isInsideZone && !task.isCompletedToday {
+                liveActivity.startActivity(for: task)
+            }
+        }
     }
 
     init(locationManager: LocationManager, notificationManager: NotificationManager, modelContext: ModelContext) {
