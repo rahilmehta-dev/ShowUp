@@ -22,14 +22,18 @@ final class LocationManager: NSObject {
     override init() {
         super.init()
         manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyBest
+        // Geofencing doesn't need GPS precision — hundred-meter accuracy saves significant battery
+        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         manager.allowsBackgroundLocationUpdates = true
-        manager.pausesLocationUpdatesAutomatically = false
+        manager.pausesLocationUpdatesAutomatically = true  // let iOS pause when user is stationary
+        manager.showsBackgroundLocationIndicator = true
         authorizationStatus = manager.authorizationStatus
     }
 
     func requestAlwaysAuthorization() {
         manager.requestAlwaysAuthorization()
+        // Do NOT call startUpdatingLocation() here — geofences deliver events without it.
+        // Continuous GPS would drain battery for no benefit.
     }
 
     func startMonitoringTask(_ task: ShowUpTask) {
@@ -78,9 +82,8 @@ final class LocationManager: NSObject {
 extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         authorizationStatus = status
-        if status == .authorizedAlways || status == .authorizedWhenInUse {
-            manager.startUpdatingLocation()
-        }
+        // Don't start continuous GPS here — geofencing works without it.
+        // startUpdatingLocation() is only called on demand (e.g. Map tab).
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

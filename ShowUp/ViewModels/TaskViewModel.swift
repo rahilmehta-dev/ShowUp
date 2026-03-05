@@ -31,7 +31,6 @@ final class TaskViewModel {
         self.notificationManager = notificationManager
         self.modelContext = modelContext
         setupGeofenceCallbacks()
-        startRefreshTimer()
     }
 
     // MARK: - Setup
@@ -46,9 +45,15 @@ final class TaskViewModel {
     }
 
     private func startRefreshTimer() {
+        guard refreshTimer == nil else { return }
         refreshTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.tick()
         }
+    }
+
+    private func stopRefreshTimer() {
+        refreshTimer?.invalidate()
+        refreshTimer = nil
     }
 
     // MARK: - Task CRUD
@@ -112,6 +117,7 @@ final class TaskViewModel {
         activeTaskIDs.insert(task.id)
         try? modelContext.save()
 
+        startRefreshTimer() // wake the timer only when someone enters a zone
         if liveActivitiesEnabled { liveActivity.startActivity(for: task) }
 
         if task.notificationsEnabled {
@@ -132,6 +138,7 @@ final class TaskViewModel {
         activeTaskIDs.remove(task.id)
         try? modelContext.save()
 
+        if activeTaskIDs.isEmpty { stopRefreshTimer() } // no active zones → kill the timer
         liveActivity.updateActivity(for: task)
 
         if task.notificationsEnabled {
@@ -199,6 +206,7 @@ final class TaskViewModel {
         task.isInsideZone = false
         task.isCompletedToday = true
         activeTaskIDs.remove(task.id)
+        if activeTaskIDs.isEmpty { stopRefreshTimer() }
 
         // Update streak
         updateStreak(for: task)
