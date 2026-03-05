@@ -64,7 +64,9 @@ final class TaskViewModel {
         tasks = (try? modelContext.fetch(descriptor)) ?? []
         resetDailyIfNeeded()
         restartMonitoring()
-        locationManager.requestOneTimeFix() // lets iOS re-evaluate all geofence states on launch
+        liveActivity.restoreActivities(matching: tasks)
+        locationManager.requestOneTimeFix()
+        print("[TaskVM] Loaded \(tasks.count) tasks | liveActivitiesEnabled=\(liveActivitiesEnabled)")
     }
 
     func addTask(_ task: ShowUpTask) {

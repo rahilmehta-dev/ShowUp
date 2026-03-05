@@ -3,19 +3,35 @@ import Foundation
 
 final class LiveActivityManager {
     private var activities: [String: Activity<ShowUpActivityAttributes>] = [:]
-    // Throttle to every 5s — ProgressView(timerInterval:) handles visual animation between updates
+    // Throttle updates — ProgressView(timerInterval:) animates between them
     private var lastUpdateTime: [String: Date] = [:]
     private let updateInterval: TimeInterval = 5
+
+    // MARK: - Restore on launch
+
+    /// Call on app launch to re-adopt any Live Activities the system kept alive
+    /// after the app was killed. Without this, the activities dict is empty and
+    /// we can't update or end them.
+    func restoreActivities(matching tasks: [ShowUpTask]) {
+        for activity in Activity<ShowUpActivityAttributes>.activities {
+            guard activity.activityState == .active else { continue }
+            if let task = tasks.first(where: { $0.name == activity.attributes.taskName }) {
+                activities[task.id.uuidString] = activity
+                print("[LiveActivity] ♻️ Restored '\(task.name)' id=\(activity.id)")
+            }
+        }
+    }
 
     // MARK: - Start
 
     func startActivity(for task: ShowUpTask) {
         let authInfo = ActivityAuthorizationInfo()
         guard authInfo.areActivitiesEnabled else {
-            print("[LiveActivity] ❌ Activities not enabled. Check NSSupportsLiveActivities in Info.plist and device Settings → ShowUp → Live Activities.")
+            print("[LiveActivity] ❌ Not enabled — go to Settings → ShowUp → Live Activities and enable them.")
             return
         }
-        // End any existing activity for this task first
+
+        // End any stale activity for this task
         endActivity(for: task, completed: false)
 
         let attributes = ShowUpActivityAttributes(
@@ -23,33 +39,35 @@ final class LiveActivityManager {
             locationName: task.locationName,
             cardColorHex: task.colorHex
         )
-        let state = makeState(for: task)
         do {
             let activity = try Activity<ShowUpActivityAttributes>.request(
                 attributes: attributes,
-                content: .init(state: state, staleDate: Date().addingTimeInterval(60)),
+                content: .init(state: makeState(for: task), staleDate: Date().addingTimeInterval(60)),
                 pushType: nil
             )
             activities[task.id.uuidString] = activity
+            lastUpdateTime.removeValue(forKey: task.id.uuidString)
             print("[LiveActivity] ✅ Started '\(task.name)' id=\(activity.id)")
         } catch {
             print("[LiveActivity] ❌ Failed to start '\(task.name)': \(error)")
         }
     }
 
-    // MARK: - Update (called every second from TaskViewModel.tick)
+    // MARK: - Update
 
     func updateActivity(for task: ShowUpTask) {
         guard let activity = activities[task.id.uuidString] else { return }
+        guard activity.activityState == .active else {
+            activities.removeValue(forKey: task.id.uuidString)
+            return
+        }
         let key = task.id.uuidString
         let now = Date()
         if let last = lastUpdateTime[key], now.timeIntervalSince(last) < updateInterval { return }
         lastUpdateTime[key] = now
         let state = makeState(for: task)
         Task {
-            await activity.update(
-                .init(state: state, staleDate: Date().addingTimeInterval(60))
-            )
+            await activity.update(.init(state: state, staleDate: Date().addingTimeInterval(60)))
         }
     }
 
@@ -62,21 +80,27 @@ final class LiveActivityManager {
         state.isInsideZone = false
         state.liveProgressStart = nil
         state.liveProgressEnd = nil
+        let key = task.id.uuidString
         Task {
-            // Keep on screen for 8 seconds after completion, then dismiss
             let policy: ActivityUIDismissalPolicy = completed
                 ? .after(Date().addingTimeInterval(8))
                 : .immediate
             await activity.end(.init(state: state, staleDate: nil), dismissalPolicy: policy)
-            activities.removeValue(forKey: task.id.uuidString)
+            activities.removeValue(forKey: key)
+            lastUpdateTime.removeValue(forKey: key)
         }
     }
 
     func endAll() {
-        for (_, activity) in activities {
-            Task { await activity.end(nil, dismissalPolicy: .immediate) }
-        }
+        let snapshot = activities
         activities.removeAll()
+        lastUpdateTime.removeAll()
+        for (_, activity) in snapshot {
+            Task {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
+        }
+        print("[LiveActivity] 🛑 Ended all activities")
     }
 
     // MARK: - State builder
