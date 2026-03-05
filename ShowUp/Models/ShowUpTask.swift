@@ -18,6 +18,9 @@ final class ShowUpTask {
     var streakCount: Int
     var lastCompletedDate: Date?
 
+    // Schedule (Calendar weekday: 1=Sun, 2=Mon, ..., 7=Sat)
+    var scheduledDays: [Int] = [1, 2, 3, 4, 5, 6, 7]
+
     // Daily tracking
     var accumulatedSeconds: Double
     var lastEnteredAt: Date?
@@ -32,7 +35,8 @@ final class ShowUpTask {
         longitude: Double,
         radius: Double = 150,
         requiredDuration: TimeInterval,
-        colorHex: String
+        colorHex: String,
+        scheduledDays: [Int] = [1, 2, 3, 4, 5, 6, 7]
     ) {
         self.id = UUID()
         self.name = name
@@ -49,6 +53,12 @@ final class ShowUpTask {
         self.accumulatedSeconds = 0
         self.isInsideZone = false
         self.isCompletedToday = false
+        self.scheduledDays = scheduledDays
+    }
+
+    var isScheduledToday: Bool {
+        let weekday = Calendar.current.component(.weekday, from: Date())
+        return scheduledDays.isEmpty || scheduledDays.contains(weekday)
     }
 
     var progress: Double {

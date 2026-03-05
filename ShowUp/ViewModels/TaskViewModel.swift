@@ -111,7 +111,7 @@ final class TaskViewModel {
 
     private func restartMonitoring() {
         locationManager.stopMonitoringAll()
-        for task in tasks where task.isEnabled && !task.isCompletedToday {
+        for task in tasks where task.isEnabled && !task.isCompletedToday && task.isScheduledToday {
             locationManager.startMonitoringTask(task)
         }
         locationManager.requestStateForAllRegions()
@@ -122,6 +122,7 @@ final class TaskViewModel {
     private func handleEnterRegion(_ regionID: String) {
         guard let task = tasks.first(where: { $0.regionIdentifier == regionID }) else { return }
         guard !task.isCompletedToday else { return }
+        guard task.isScheduledToday else { return }
 
         task.isInsideZone = true
         task.lastEnteredAt = Date()
@@ -310,7 +311,10 @@ final class TaskViewModel {
     }
 
     // Pastel colors palette
-    static let pastelColors = ["#AED6F1", "#FFDAB9", "#B2F0C5", "#D7BDE2", "#FFF3A3"]
+    static let pastelColors = [
+        "#AED6F1", "#FFDAB9", "#B2F0C5", "#D7BDE2", "#FFF3A3",
+        "#FFFFFF", "#C8C8C8", "#FFB3B3", "#FFB6C1", "#FFAB76", "#A8E6E6"
+    ]
 
     static func nextPastelColor(for index: Int) -> String {
         pastelColors[index % pastelColors.count]

@@ -10,7 +10,7 @@ ShowUp is an iOS 17+ app that tracks location-based habits. No manual check-offs
 
 ## How It Works
 
-1. **Create a task** — name it, search for a location, pick a duration (15–90 min)
+1. **Create a task** — name it, search for a location, pick a duration (15–90 min), choose which days of the week it runs
 2. **ShowUp monitors your location** in the background using geofencing (150m radius)
 3. **Walk into the zone** — the timer starts automatically
 4. **Leave the zone** — timer pauses (with an optional 5-min grace period)
@@ -34,12 +34,14 @@ ShowUp is an iOS 17+ app that tracks location-based habits. No manual check-offs
 - **Timer persists** across app kills — uses entry timestamp, not an in-memory timer
 - **Multiple tasks** tracked simultaneously
 - **Grace period** — optional 5-min buffer before timer pauses on exit
+- **Custom schedule** — assign tasks to specific days of the week (e.g. Mon/Wed/Fri only); unscheduled tasks are hidden and geofencing is skipped
 
 ### UI
-- Black background with **pastel task cards** (blue, peach, mint, purple, yellow)
+- Black background with **pastel task cards** — 11 colors: blue, peach, mint, purple, yellow, white, grey, baby red, pink, orange, cyan
 - **Live progress rings** on each card, updating every second via `TimelineView`
 - **Week date strip** with today highlighted
 - **Pulse animation** on cards when actively tracking
+- **Schedule picker** in Add/Edit — day-of-week toggles with an "Every Day" quick-select
 
 ### Live Activity
 - **Dynamic Island** — compact ring + time remaining while in zone

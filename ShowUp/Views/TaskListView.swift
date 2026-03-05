@@ -9,6 +9,10 @@ struct TaskListView: View {
 
     private let calendar = Calendar.current
 
+    private var todaysTasks: [ShowUpTask] {
+        viewModel.tasks.filter { $0.isScheduledToday }
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -42,12 +46,12 @@ struct TaskListView: View {
                         .padding(.bottom, 20)
 
                     // Task list
-                    if viewModel.tasks.isEmpty {
+                    if todaysTasks.isEmpty {
                         EmptyTasksView()
                     } else {
                         ScrollView {
                             LazyVStack(spacing: 16) {
-                                ForEach(viewModel.tasks, id: \.id) { task in
+                                ForEach(todaysTasks, id: \.id) { task in
                                     NavigationLink(destination: TaskDetailView(task: task)) {
                                         TaskCardView(task: task)
                                     }

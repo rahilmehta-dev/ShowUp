@@ -185,6 +185,37 @@ struct TaskDetailView: View {
                             DetailChip(icon: "calendar", label: "Created", value: formatDate(task.createdAt))
                         }
 
+                        // Schedule display
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Schedule")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.5))
+                                .textCase(.uppercase)
+
+                            let dayOrder = [2, 3, 4, 5, 6, 7, 1]
+                            let dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
+                            HStack(spacing: 0) {
+                                ForEach(Array(dayOrder.enumerated()), id: \.offset) { index, weekday in
+                                    let isActive = task.scheduledDays.contains(weekday)
+                                    VStack(spacing: 4) {
+                                        Text(dayLabels[index])
+                                            .font(.system(size: 11, weight: .medium))
+                                            .foregroundColor(isActive ? .white : .white.opacity(0.25))
+                                        Circle()
+                                            .fill(isActive ? task.cardColor : Color.clear)
+                                            .overlay(
+                                                Circle().stroke(Color.white.opacity(isActive ? 0 : 0.2), lineWidth: 1.5)
+                                            )
+                                            .frame(width: 26, height: 26)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                }
+                            }
+                        }
+                        .padding(14)
+                        .background(Color.white.opacity(0.05))
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+
                         // Action buttons
                         HStack(spacing: 12) {
                             Button {

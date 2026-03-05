@@ -13,6 +13,7 @@ struct AddTaskView: View {
     @State private var selectedLocation: MKMapItem?
     @State private var selectedDuration: TimeInterval = 1800 // 30 min
     @State private var selectedColorHex = TaskViewModel.pastelColors[0]
+    @State private var scheduledDays: Set<Int> = Set(1...7)
     @State private var searchResults: [MKMapItem] = []
     @State private var isSearching = false
     @State private var mapPosition: MapCameraPosition = .region(
@@ -199,6 +200,57 @@ struct AddTaskView: View {
                             }
                         }
 
+                        // Schedule picker
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Label("Schedule", systemImage: "calendar")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(.white.opacity(0.5))
+                                    .textCase(.uppercase)
+                                Spacer()
+                                Button {
+                                    scheduledDays = Set(1...7)
+                                } label: {
+                                    Text("Every Day")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(scheduledDays.count == 7 ? .black : .white)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 5)
+                                        .background(scheduledDays.count == 7 ? Color.white : Color.white.opacity(0.15))
+                                        .clipShape(Capsule())
+                                }
+                            }
+
+                            // Mon-first order: [2,3,4,5,6,7,1], labels M T W T F S S
+                            let dayOrder = [2, 3, 4, 5, 6, 7, 1]
+                            let dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
+                            HStack(spacing: 0) {
+                                ForEach(Array(dayOrder.enumerated()), id: \.offset) { index, weekday in
+                                    let isSelected = scheduledDays.contains(weekday)
+                                    Button {
+                                        if isSelected && scheduledDays.count > 1 {
+                                            scheduledDays.remove(weekday)
+                                        } else if !isSelected {
+                                            scheduledDays.insert(weekday)
+                                        }
+                                    } label: {
+                                        VStack(spacing: 6) {
+                                            Text(dayLabels[index])
+                                                .font(.system(size: 11, weight: .medium))
+                                                .foregroundColor(isSelected ? .white : .white.opacity(0.3))
+                                            Circle()
+                                                .fill(isSelected ? Color.white : Color.clear)
+                                                .overlay(
+                                                    Circle().stroke(Color.white.opacity(isSelected ? 0 : 0.25), lineWidth: 1.5)
+                                                )
+                                                .frame(width: 28, height: 28)
+                                        }
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                }
+                            }
+                        }
+
                         // Color picker
                         VStack(alignment: .leading, spacing: 12) {
                             Label("Card Color", systemImage: "paintpalette")
@@ -206,7 +258,7 @@ struct AddTaskView: View {
                                 .foregroundColor(.white.opacity(0.5))
                                 .textCase(.uppercase)
 
-                            HStack(spacing: 14) {
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 6), spacing: 12) {
                                 ForEach(TaskViewModel.pastelColors, id: \.self) { hex in
                                     Button {
                                         selectedColorHex = hex
@@ -303,6 +355,7 @@ struct AddTaskView: View {
                 searchText = task.locationName
                 selectedDuration = task.requiredDuration
                 selectedColorHex = task.colorHex
+                scheduledDays = Set(task.scheduledDays)
                 existingCoordinate = task.coordinate
                 existingLocationName = task.locationName
                 mapPosition = .region(MKCoordinateRegion(
@@ -346,6 +399,7 @@ struct AddTaskView: View {
             task.name = taskName.trimmingCharacters(in: .whitespaces)
             task.requiredDuration = selectedDuration
             task.colorHex = selectedColorHex
+            task.scheduledDays = Array(scheduledDays)
             if let location = selectedLocation,
                let coord = location.placemark.location?.coordinate {
                 task.locationName = location.name ?? searchText
@@ -363,7 +417,8 @@ struct AddTaskView: View {
                 latitude: coord.latitude,
                 longitude: coord.longitude,
                 requiredDuration: selectedDuration,
-                colorHex: selectedColorHex
+                colorHex: selectedColorHex,
+                scheduledDays: Array(scheduledDays)
             )
             onSave?(task)
             dismiss()
