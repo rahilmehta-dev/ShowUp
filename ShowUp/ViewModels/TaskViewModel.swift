@@ -63,6 +63,7 @@ final class TaskViewModel {
         tasks = (try? modelContext.fetch(descriptor)) ?? []
         resetDailyIfNeeded()
         restartMonitoring()
+        locationManager.requestOneTimeFix() // lets iOS re-evaluate all geofence states on launch
     }
 
     func addTask(_ task: ShowUpTask) {

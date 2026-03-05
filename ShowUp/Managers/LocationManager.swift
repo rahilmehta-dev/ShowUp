@@ -32,8 +32,11 @@ final class LocationManager: NSObject {
 
     func requestAlwaysAuthorization() {
         manager.requestAlwaysAuthorization()
-        // Do NOT call startUpdatingLocation() here — geofences deliver events without it.
-        // Continuous GPS would drain battery for no benefit.
+    }
+
+    /// One-shot fix so iOS can evaluate geofence states. Stops automatically after one result.
+    func requestOneTimeFix() {
+        manager.requestLocation()
     }
 
     func startMonitoringTask(_ task: ShowUpTask) {
@@ -82,8 +85,11 @@ final class LocationManager: NSObject {
 extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         authorizationStatus = status
-        // Don't start continuous GPS here — geofencing works without it.
-        // startUpdatingLocation() is only called on demand (e.g. Map tab).
+        if status == .authorizedAlways || status == .authorizedWhenInUse {
+            // Single-shot fix so iOS can immediately evaluate all geofence states.
+            // requestLocation() fires once then stops — no continuous GPS drain.
+            manager.requestLocation()
+        }
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
