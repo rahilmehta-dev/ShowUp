@@ -1,0 +1,10 @@
+.DS_Store
+*.xcuserstate
+xcuserdata/
+.build/
+DerivedData/
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.xcarchive
