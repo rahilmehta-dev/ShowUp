@@ -28,6 +28,10 @@ final class ShowUpTask {
     var isCompletedToday: Bool
     var lastResetDate: Date?
 
+    // Session history (reset each day)
+    var sessionStarts: [Date] = []
+    var sessionDurations: [Double] = []
+
     init(
         name: String,
         locationName: String,
@@ -54,6 +58,7 @@ final class ShowUpTask {
         self.isInsideZone = false
         self.isCompletedToday = false
         self.scheduledDays = scheduledDays
+        self.lastResetDate = Calendar.current.startOfDay(for: Date())
     }
 
     var isScheduledToday: Bool {
@@ -93,12 +98,43 @@ final class ShowUpTask {
         "showup_\(id.uuidString)"
     }
 
+    var firstSessionStart: Date? { sessionStarts.first }
+
+    var sessionBreakdownText: String {
+        let pastTotal = sessionDurations.reduce(0, +)
+        let rawCurrent = currentSessionSeconds
+        // Cap ongoing session so total never exceeds requiredDuration in the display
+        let cappedCurrent = min(rawCurrent, max(0, requiredDuration - pastTotal))
+        let hasOngoing = isInsideZone && cappedCurrent >= 1
+        if sessionDurations.isEmpty && !hasOngoing { return "" }
+
+        var parts = sessionDurations.map { formatDuration($0) }
+        if hasOngoing { parts.append(formatDuration(cappedCurrent)) }
+
+        if parts.count == 1 {
+            return parts[0]
+        } else {
+            let sum = pastTotal + (hasOngoing ? cappedCurrent : 0)
+            return parts.joined(separator: " + ") + " = " + formatDuration(sum)
+        }
+    }
+
+    private func formatDuration(_ seconds: Double) -> String {
+        let s = Int(seconds)
+        if s < 60 { return "\(s)s" }
+        let m = s / 60
+        let rem = s % 60
+        return rem > 0 ? "\(m)m \(rem)s" : "\(m)m"
+    }
+
     func resetForNewDay() {
         accumulatedSeconds = 0
         lastEnteredAt = nil
         isInsideZone = false
         isCompletedToday = false
         lastResetDate = Calendar.current.startOfDay(for: Date())
+        sessionStarts = []
+        sessionDurations = []
     }
 
     var needsDailyReset: Bool {
@@ -106,11 +142,8 @@ final class ShowUpTask {
         if let last = lastResetDate {
             return last < today
         }
-        // If lastCompletedDate exists and is not today, we need a reset
-        if let completed = lastCompletedDate {
-            return !Calendar.current.isDateInToday(completed) && isCompletedToday
-        }
-        return false
+        // Existing tasks without lastResetDate — reset if any progress was made
+        return accumulatedSeconds > 0 || isCompletedToday || !sessionStarts.isEmpty
     }
 }
 

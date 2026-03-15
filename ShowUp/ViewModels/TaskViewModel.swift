@@ -13,8 +13,6 @@ final class TaskViewModel {
     var tasks: [ShowUpTask] = []
     var activeTaskIDs: Set<UUID> = []
     private var refreshTimer: Timer?
-    private var halfwayNotifiedIDs: Set<UUID> = []
-    private var eightyPercentNotifiedIDs: Set<UUID> = []
 
     // Settings
     var geofenceRadius: Double = 150
@@ -112,8 +110,6 @@ final class TaskViewModel {
     private func resetDailyIfNeeded() {
         for task in tasks where task.needsDailyReset {
             task.resetForNewDay()
-            halfwayNotifiedIDs.remove(task.id)
-            eightyPercentNotifiedIDs.remove(task.id)
         }
         try? modelContext.save()
     }
@@ -122,9 +118,20 @@ final class TaskViewModel {
 
     private func restartMonitoring() {
         locationManager.stopMonitoringAll()
-        for task in tasks where task.isEnabled && !task.isCompletedToday && task.isScheduledToday {
-            locationManager.startMonitoringTask(task)
+        for task in tasks {
+            // Clear zone state for tasks that shouldn't be active today
+            if task.isInsideZone && (!task.isEnabled || !task.isScheduledToday || task.isCompletedToday) {
+                if let entered = task.lastEnteredAt {
+                    task.accumulatedSeconds += Date().timeIntervalSince(entered)
+                }
+                task.isInsideZone = false
+                task.lastEnteredAt = nil
+            }
+            if task.isEnabled && !task.isCompletedToday && task.isScheduledToday {
+                locationManager.startMonitoringTask(task)
+            }
         }
+        try? modelContext.save()
         locationManager.requestStateForAllRegions()
     }
 
@@ -178,6 +185,21 @@ final class TaskViewModel {
         }
     }
 
+    // MARK: - Milestone persistence (survives app kill)
+
+    private func milestoneKey(_ task: ShowUpTask, percent: String) -> String {
+        let day = Int(Calendar.current.startOfDay(for: Date()).timeIntervalSince1970)
+        return "milestone_\(task.id.uuidString)_\(percent)_\(day)"
+    }
+
+    private func hasFiredMilestone(_ task: ShowUpTask, percent: String) -> Bool {
+        UserDefaults.standard.bool(forKey: milestoneKey(task, percent: percent))
+    }
+
+    private func markMilestoneFired(_ task: ShowUpTask, percent: String) {
+        UserDefaults.standard.set(true, forKey: milestoneKey(task, percent: percent))
+    }
+
     // MARK: - Tick (1 second timer)
 
     private func tick() {
@@ -193,16 +215,16 @@ final class TaskViewModel {
                 liveActivity.updateActivity(for: task)
             }
 
-            // Check milestone notifications
-            if progress >= 0.5 && !halfwayNotifiedIDs.contains(task.id) {
-                halfwayNotifiedIDs.insert(task.id)
+            // Check milestone notifications (UserDefaults-keyed so they survive app kills)
+            if progress >= 0.5 && !hasFiredMilestone(task, percent: "50") {
+                markMilestoneFired(task, percent: "50")
                 if task.notificationsEnabled {
                     notificationManager.sendHalfwayNotification(taskName: task.name)
                 }
             }
 
-            if progress >= 0.8 && !eightyPercentNotifiedIDs.contains(task.id) {
-                eightyPercentNotifiedIDs.insert(task.id)
+            if progress >= 0.8 && !hasFiredMilestone(task, percent: "80") {
+                markMilestoneFired(task, percent: "80")
                 let remainingMins = Int(task.remainingSeconds / 60) + 1
                 if task.notificationsEnabled {
                     notificationManager.scheduleProgressNotification(
@@ -304,6 +326,9 @@ final class TaskViewModel {
     func updateGracePeriod(enabled: Bool) {
         gracePeriodEnabled = enabled
         locationManager.gracePeriodEnabled = enabled
+        if !enabled {
+            locationManager.cancelAllGracePeriodTimers()
+        }
     }
 
     func resetAllStreaks() {
