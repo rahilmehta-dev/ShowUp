@@ -124,8 +124,15 @@ final class TaskViewModel {
         guard !task.isCompletedToday else { return }
         guard task.isScheduledToday else { return }
 
+        let now = Date()
+        if !task.isInsideZone {
+            // Fresh entry: start new session
+            task.sessionStarts.append(now)
+            task.lastEnteredAt = now
+        }
+        // If already isInsideZone (geofence re-fire on relaunch), keep the original
+        // lastEnteredAt so accumulated time isn't lost
         task.isInsideZone = true
-        task.lastEnteredAt = Date()
         activeTaskIDs.insert(task.id)
         try? modelContext.save()
 
@@ -143,7 +150,9 @@ final class TaskViewModel {
 
         // Accumulate time
         if let entered = task.lastEnteredAt {
-            task.accumulatedSeconds += Date().timeIntervalSince(entered)
+            let duration = Date().timeIntervalSince(entered)
+            task.accumulatedSeconds += duration
+            task.sessionDurations.append(duration)
         }
         task.isInsideZone = false
         task.lastEnteredAt = nil
@@ -210,9 +219,11 @@ final class TaskViewModel {
     private func completeTask(_ task: ShowUpTask) {
         guard !task.isCompletedToday else { return }
 
-        // Finalize accumulated time
+        // Finalize accumulated time, capped at requiredDuration
         if let entered = task.lastEnteredAt {
-            task.accumulatedSeconds += Date().timeIntervalSince(entered)
+            let duration = Date().timeIntervalSince(entered)
+            task.sessionDurations.append(duration)
+            task.accumulatedSeconds = min(task.accumulatedSeconds + duration, task.requiredDuration)
         }
         task.lastEnteredAt = nil
         task.isInsideZone = false

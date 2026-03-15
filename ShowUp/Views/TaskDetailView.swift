@@ -129,7 +129,7 @@ struct TaskDetailView: View {
                                         .font(.system(size: 15, weight: .semibold))
                                         .foregroundColor(.white.opacity(0.7))
                                     Spacer()
-                                    Text("\(formatTime(task.totalAccumulatedSeconds)) / \(task.durationText)")
+                                    Text("\(formatTime(min(task.totalAccumulatedSeconds, task.requiredDuration))) / \(task.durationText)")
                                         .font(.system(size: 14, weight: .medium))
                                         .foregroundColor(.white.opacity(0.5))
                                 }

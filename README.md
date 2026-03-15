@@ -31,7 +31,7 @@ ShowUp is an iOS 17+ app that tracks location-based habits. No manual check-offs
 ### Core
 - **Zero manual input** — location + time = completion
 - **Geofencing** via `CLLocationManager` + `CLCircularRegion` (150m radius, adjustable)
-- **Timer persists** across app kills — uses entry timestamp, not an in-memory timer
+- **Timer persists** across app kills — uses entry timestamp, not an in-memory timer; geofence re-fires on relaunch preserve accumulated time instead of resetting to zero
 - **Multiple tasks** tracked simultaneously
 - **Grace period** — optional 5-min buffer before timer pauses on exit
 - **Custom schedule** — assign tasks to specific days of the week (e.g. Mon/Wed/Fri only); unscheduled tasks are hidden and geofencing is skipped
@@ -39,7 +39,8 @@ ShowUp is an iOS 17+ app that tracks location-based habits. No manual check-offs
 ### UI
 - Black background with **pastel task cards** — 11 colors: blue, peach, mint, purple, yellow, white, grey, baby red, pink, orange, cyan
 - **Live progress rings** on each card, updating every second via `TimelineView`
-- **Week date strip** with today highlighted
+- **Tappable week strip** — tap any day to see that day's results; past days show completed/missed status, future days show what's scheduled; haptic feedback on tap
+- **Day history rows** — green checkmark + time spent if completed, red ✗ if missed, clock if upcoming
 - **Pulse animation** on cards when actively tracking
 - **Schedule picker** in Add/Edit — day-of-week toggles with an "Every Day" quick-select
 
@@ -100,7 +101,7 @@ ShowUp/
 │   └── BackgroundTaskManager.swift  # BGTaskScheduler registration
 └── Views/
     ├── ContentView.swift            # TabView
-    ├── TaskListView.swift           # Cards, week strip, progress rings
+    ├── TaskListView.swift           # Cards, tappable week strip, day history, progress rings
     ├── AddTaskView.swift            # Search + map preview + duration picker
     ├── TaskDetailView.swift         # Map, status, streak dots, progress bar
     ├── MapOverviewView.swift        # All geofences on one map
