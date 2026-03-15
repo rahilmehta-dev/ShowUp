@@ -76,13 +76,24 @@ struct SettingsView: View {
                             )
                             Divider().background(Color.white.opacity(0.08))
                             SettingsToggleRow(
-                                icon: "livephoto",
+                                icon: "lock.rectangle.on.rectangle",
                                 iconColor: .purple,
-                                title: "Live Activities",
-                                subtitle: "Show timer in Dynamic Island & Lock Screen",
+                                title: "Live Activity",
+                                subtitle: "Show timer on Lock Screen",
                                 isOn: Binding(
                                     get: { viewModel.liveActivitiesEnabled },
                                     set: { viewModel.setLiveActivitiesEnabled($0) }
+                                )
+                            )
+                            Divider().background(Color.white.opacity(0.08))
+                            SettingsToggleRow(
+                                icon: "capsule.fill",
+                                iconColor: .cyan,
+                                title: "Dynamic Island",
+                                subtitle: "Show timer pill in Dynamic Island",
+                                isOn: Binding(
+                                    get: { viewModel.dynamicIslandEnabled },
+                                    set: { viewModel.setDynamicIslandEnabled($0) }
                                 )
                             )
                         }
@@ -117,7 +128,7 @@ struct SettingsView: View {
                             Text("ShowUp")
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(.white.opacity(0.3))
-                            Text("Version 1.0")
+                            Text("Version 1.5")
                                 .font(.system(size: 13))
                                 .foregroundColor(.white.opacity(0.2))
                         }
@@ -249,9 +260,14 @@ struct TaskNotificationRow: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            Circle()
-                .fill(task.cardColor)
-                .frame(width: 12, height: 12)
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(task.cardColor.opacity(0.25))
+                    .frame(width: 36, height: 36)
+                Image(systemName: task.notificationsEnabled ? "bell.fill" : "bell.slash.fill")
+                    .font(.system(size: 15))
+                    .foregroundColor(task.cardColor)
+            }
             Text(task.name)
                 .font(.system(size: 15))
                 .foregroundColor(.white)

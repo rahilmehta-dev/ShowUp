@@ -20,6 +20,7 @@ final class TaskViewModel {
     var geofenceRadius: Double = 150
     var gracePeriodEnabled: Bool = true
     var liveActivitiesEnabled: Bool = (UserDefaults.standard.object(forKey: "liveActivitiesEnabled") as? Bool) ?? true
+    var dynamicIslandEnabled: Bool = (UserDefaults.standard.object(forKey: "dynamicIslandEnabled") as? Bool) ?? false
 
     func setLiveActivitiesEnabled(_ enabled: Bool) {
         liveActivitiesEnabled = enabled
@@ -27,10 +28,19 @@ final class TaskViewModel {
         if !enabled {
             liveActivity.endAll()
         } else {
-            // User re-enabled while already inside a zone — restart immediately
             for task in tasks where task.isInsideZone && !task.isCompletedToday {
                 liveActivity.startActivity(for: task)
             }
+        }
+    }
+
+    func setDynamicIslandEnabled(_ enabled: Bool) {
+        dynamicIslandEnabled = enabled
+        liveActivity.dynamicIslandEnabled = enabled
+        UserDefaults.standard.set(enabled, forKey: "dynamicIslandEnabled")
+        // Push updated state so the widget re-reads dynamicIslandEnabled immediately
+        for task in tasks where task.isInsideZone && !task.isCompletedToday {
+            liveActivity.updateActivity(for: task)
         }
     }
 
@@ -67,6 +77,7 @@ final class TaskViewModel {
     // MARK: - Task CRUD
 
     func loadTasks() {
+        liveActivity.dynamicIslandEnabled = dynamicIslandEnabled
         let descriptor = FetchDescriptor<ShowUpTask>(sortBy: [SortDescriptor(\.createdAt)])
         tasks = (try? modelContext.fetch(descriptor)) ?? []
         resetDailyIfNeeded()

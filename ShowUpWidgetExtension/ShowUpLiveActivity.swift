@@ -23,11 +23,17 @@ struct ShowUpLiveActivity: Widget {
                     ExpandedBottomView(context: context)
                 }
             } compactLeading: {
-                CompactRingView(context: context)
+                if context.state.dynamicIslandEnabled {
+                    CompactRingView(context: context)
+                }
             } compactTrailing: {
-                CompactTrailingView(context: context)
+                if context.state.dynamicIslandEnabled {
+                    CompactTrailingView(context: context)
+                }
             } minimal: {
-                MinimalView(context: context)
+                if context.state.dynamicIslandEnabled {
+                    MinimalView(context: context)
+                }
             }
         }
     }
