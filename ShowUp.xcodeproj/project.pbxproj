@@ -23,16 +23,64 @@
 		AA00020E000000000000001 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00010E000000000000001 /* NotificationManager.swift */; };
 		AA00020F000000000000001 /* BackgroundTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00010F000000000000001 /* BackgroundTaskManager.swift */; };
 		AA000210000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000111000000000000001 /* Assets.xcassets */; };
-		/* ShowUpActivityAttributes.swift compiled in main app AND widget */
-		AB000201000000000000001 /* ShowUpActivityAttributes.swift in Sources (App) */ = {isa = PBXBuildFile; fileRef = AB000101000000000000001 /* ShowUpActivityAttributes.swift */; };
+		AB000201000000000000001 /* ShowUpActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000101000000000000001 /* ShowUpActivityAttributes.swift */; };
 		AB000202000000000000001 /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000102000000000000001 /* LiveActivityManager.swift */; };
-		/* Widget extension build files */
-		AB000203000000000000001 /* ShowUpActivityAttributes.swift in Sources (Widget) */ = {isa = PBXBuildFile; fileRef = AB000101000000000000001 /* ShowUpActivityAttributes.swift */; };
+		AB000203000000000000001 /* ShowUpActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000101000000000000001 /* ShowUpActivityAttributes.swift */; };
 		AB000204000000000000001 /* ShowUpLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000103000000000000001 /* ShowUpLiveActivity.swift */; };
 		AB000205000000000000001 /* ShowUpWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000104000000000000001 /* ShowUpWidgetBundle.swift */; };
-		AB000206000000000000001 /* Assets.xcassets in Resources (Widget) */ = {isa = PBXBuildFile; fileRef = AB000105000000000000001 /* Assets.xcassets (Widget) */; };
+		AB000206000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB000105000000000000001 /* Assets.xcassets */; };
 		AC000004000000000000001 /* ShowUpWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = AB000107000000000000001 /* ShowUpWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AW000201000000000000001 /* ShowUpWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AW000101000000000000001 /* ShowUpWatchApp.swift */; };
+		AW000202000000000000001 /* WatchContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AW000102000000000000001 /* WatchContentView.swift */; };
+		AW000203000000000000001 /* WatchTaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AW000103000000000000001 /* WatchTaskRowView.swift */; };
+		AW000204000000000000001 /* WatchTaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AW000109000000000000001 /* WatchTaskDetailView.swift */; };
+		AW000205000000000000001 /* WatchStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AW000104000000000000001 /* WatchStore.swift */; };
+		AW000206000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AW000105000000000000001 /* Assets.xcassets */; };
+		AW000207000000000000001 /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AW000108000000000000001 /* WatchConnectivityManager.swift */; };
+		AW000208000000000000001 /* ShowUpWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = AW000107000000000000001 /* ShowUpWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AC000001000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA000001000000000000002 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AB000003000000000000001;
+			remoteInfo = ShowUpWidgetExtension;
+		};
+		AW000C01000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA000001000000000000002 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AW000003000000000000001;
+			remoteInfo = ShowUpWatchApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AC000003000000000000001 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AC000004000000000000001 /* ShowUpWidgetExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AW000013000000000000001 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				AW000208000000000000001 /* ShowUpWatchApp.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		AA000101000000000000001 /* ShowUpApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowUpApp.swift; sourceTree = "<group>"; };
@@ -54,39 +102,23 @@
 		AA000111000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA000112000000000000001 /* ShowUp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShowUp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA000113000000000000001 /* ShowUp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShowUp.entitlements; sourceTree = "<group>"; };
-		/* Live Activity / Widget extension files */
 		AB000101000000000000001 /* ShowUpActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowUpActivityAttributes.swift; sourceTree = "<group>"; };
 		AB000102000000000000001 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 		AB000103000000000000001 /* ShowUpLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowUpLiveActivity.swift; sourceTree = "<group>"; };
 		AB000104000000000000001 /* ShowUpWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowUpWidgetBundle.swift; sourceTree = "<group>"; };
-		AB000105000000000000001 /* Assets.xcassets (Widget) */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AB000106000000000000001 /* Info.plist (Widget) */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB000105000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AB000106000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB000107000000000000001 /* ShowUpWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShowUpWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AW000101000000000000001 /* ShowUpWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowUpWatchApp.swift; sourceTree = "<group>"; };
+		AW000102000000000000001 /* WatchContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchContentView.swift; sourceTree = "<group>"; };
+		AW000103000000000000001 /* WatchTaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTaskRowView.swift; sourceTree = "<group>"; };
+		AW000104000000000000001 /* WatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchStore.swift; sourceTree = "<group>"; };
+		AW000105000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AW000106000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AW000107000000000000001 /* ShowUpWatchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShowUpWatchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AW000108000000000000001 /* WatchConnectivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityManager.swift; sourceTree = "<group>"; };
+		AW000109000000000000001 /* WatchTaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTaskDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXContainerItemProxy section */
-		AC000001000000000000001 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AA000001000000000000002 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AB000003000000000000001;
-			remoteInfo = ShowUpWidgetExtension;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		AC000003000000000000001 /* Embed App Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				AC000004000000000000001 /* ShowUpWidgetExtension.appex in Embed App Extensions */,
-			);
-			name = "Embed App Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		AA000011000000000000001 /* Frameworks */ = {
@@ -96,7 +128,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AB000011000000000000001 /* Frameworks (Widget) */ = {
+		AB000011000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AW000011000000000000001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -111,6 +150,7 @@
 			children = (
 				AA000009000000000000001 /* ShowUp */,
 				AB000009000000000000001 /* ShowUpWidgetExtension */,
+				AW000009000000000000001 /* ShowUpWatchApp */,
 				AA00000F000000000000001 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -129,17 +169,6 @@
 				AA00000E000000000000001 /* Managers */,
 			);
 			path = ShowUp;
-			sourceTree = "<group>";
-		};
-		AB000009000000000000001 /* ShowUpWidgetExtension */ = {
-			isa = PBXGroup;
-			children = (
-				AB000103000000000000001 /* ShowUpLiveActivity.swift */,
-				AB000104000000000000001 /* ShowUpWidgetBundle.swift */,
-				AB000105000000000000001 /* Assets.xcassets (Widget) */,
-				AB000106000000000000001 /* Info.plist (Widget) */,
-			);
-			path = ShowUpWidgetExtension;
 			sourceTree = "<group>";
 		};
 		AA00000B000000000000001 /* Models */ = {
@@ -181,6 +210,7 @@
 				AA00010E000000000000001 /* NotificationManager.swift */,
 				AA00010F000000000000001 /* BackgroundTaskManager.swift */,
 				AB000102000000000000001 /* LiveActivityManager.swift */,
+				AW000108000000000000001 /* WatchConnectivityManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -190,8 +220,34 @@
 			children = (
 				AA000112000000000000001 /* ShowUp.app */,
 				AB000107000000000000001 /* ShowUpWidgetExtension.appex */,
+				AW000107000000000000001 /* ShowUpWatchApp.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AB000009000000000000001 /* ShowUpWidgetExtension */ = {
+			isa = PBXGroup;
+			children = (
+				AB000103000000000000001 /* ShowUpLiveActivity.swift */,
+				AB000104000000000000001 /* ShowUpWidgetBundle.swift */,
+				AB000105000000000000001 /* Assets.xcassets */,
+				AB000106000000000000001 /* Info.plist */,
+			);
+			path = ShowUpWidgetExtension;
+			sourceTree = "<group>";
+		};
+		AW000009000000000000001 /* ShowUpWatchApp */ = {
+			isa = PBXGroup;
+			children = (
+				AW000101000000000000001 /* ShowUpWatchApp.swift */,
+				AW000102000000000000001 /* WatchContentView.swift */,
+				AW000103000000000000001 /* WatchTaskRowView.swift */,
+				AW000104000000000000001 /* WatchStore.swift */,
+				AW000109000000000000001 /* WatchTaskDetailView.swift */,
+				AW000105000000000000001 /* Assets.xcassets */,
+				AW000106000000000000001 /* Info.plist */,
+			);
+			path = ShowUpWatchApp;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -205,11 +261,13 @@
 				AA000011000000000000001 /* Frameworks */,
 				AA000012000000000000001 /* Resources */,
 				AC000003000000000000001 /* Embed App Extensions */,
+				AW000013000000000000001 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				AC000002000000000000001 /* PBXTargetDependency */,
+				AW000C02000000000000001 /* PBXTargetDependency */,
 			);
 			name = ShowUp;
 			productName = ShowUp;
@@ -221,7 +279,7 @@
 			buildConfigurationList = AB000004000000000000001 /* Build configuration list for PBXNativeTarget "ShowUpWidgetExtension" */;
 			buildPhases = (
 				AB000010000000000000001 /* Sources */,
-				AB000011000000000000001 /* Frameworks (Widget) */,
+				AB000011000000000000001 /* Frameworks */,
 				AB000012000000000000001 /* Resources */,
 			);
 			buildRules = (
@@ -233,15 +291,24 @@
 			productReference = AB000107000000000000001 /* ShowUpWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-/* End PBXNativeTarget section */
-
-/* Begin PBXTargetDependency section */
-		AC000002000000000000001 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AB000003000000000000001 /* ShowUpWidgetExtension */;
-			targetProxy = AC000001000000000000001 /* PBXContainerItemProxy */;
+		AW000003000000000000001 /* ShowUpWatchApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AW000004000000000000001 /* Build configuration list for PBXNativeTarget "ShowUpWatchApp" */;
+			buildPhases = (
+				AW000010000000000000001 /* Sources */,
+				AW000011000000000000001 /* Frameworks */,
+				AW000012000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShowUpWatchApp;
+			productName = ShowUpWatchApp;
+			productReference = AW000107000000000000001 /* ShowUpWatchApp.app */;
+			productType = "com.apple.product-type.application";
 		};
-/* End PBXTargetDependency section */
+/* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		AA000001000000000000002 /* Project object */ = {
@@ -255,6 +322,9 @@
 						CreatedOnToolsVersion = 15.0;
 					};
 					AB000003000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					AW000003000000000000001 = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
@@ -274,6 +344,7 @@
 			targets = (
 				AA000003000000000000001 /* ShowUp */,
 				AB000003000000000000001 /* ShowUpWidgetExtension */,
+				AW000003000000000000001 /* ShowUpWatchApp */,
 			);
 		};
 /* End PBXProject section */
@@ -287,11 +358,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AB000012000000000000001 /* Resources (Widget) */ = {
+		AB000012000000000000001 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB000206000000000000001 /* Assets.xcassets in Resources (Widget) */,
+				AB000206000000000000001 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AW000012000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AW000206000000000000001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,22 +396,48 @@
 				AA00020D000000000000001 /* LocationManager.swift in Sources */,
 				AA00020E000000000000001 /* NotificationManager.swift in Sources */,
 				AA00020F000000000000001 /* BackgroundTaskManager.swift in Sources */,
-				AB000201000000000000001 /* ShowUpActivityAttributes.swift in Sources (App) */,
+				AB000201000000000000001 /* ShowUpActivityAttributes.swift in Sources */,
 				AB000202000000000000001 /* LiveActivityManager.swift in Sources */,
+				AW000207000000000000001 /* WatchConnectivityManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AB000010000000000000001 /* Sources (Widget) */ = {
+		AB000010000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB000203000000000000001 /* ShowUpActivityAttributes.swift in Sources (Widget) */,
+				AB000203000000000000001 /* ShowUpActivityAttributes.swift in Sources */,
 				AB000204000000000000001 /* ShowUpLiveActivity.swift in Sources */,
 				AB000205000000000000001 /* ShowUpWidgetBundle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AW000010000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AW000201000000000000001 /* ShowUpWatchApp.swift in Sources */,
+				AW000202000000000000001 /* WatchContentView.swift in Sources */,
+				AW000203000000000000001 /* WatchTaskRowView.swift in Sources */,
+				AW000204000000000000001 /* WatchTaskDetailView.swift in Sources */,
+				AW000205000000000000001 /* WatchStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AC000002000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AB000003000000000000001 /* ShowUpWidgetExtension */;
+			targetProxy = AC000001000000000000001 /* PBXContainerItemProxy */;
+		};
+		AW000C02000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AW000003000000000000001 /* ShowUpWatchApp */;
+			targetProxy = AW000C01000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		AA000005000000000000001 /* Debug */ = {
@@ -469,7 +574,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rahilmehta.showup;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -496,7 +601,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rahilmehta.showup;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -505,7 +610,7 @@
 			};
 			name = Release;
 		};
-		AB000007000000000000001 /* Debug (Widget) */ = {
+		AB000007000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -530,7 +635,7 @@
 			};
 			name = Debug;
 		};
-		AB000008000000000000001 /* Release (Widget) */ = {
+		AB000008000000000000001 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -552,6 +657,58 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		AW000007000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CA796SNXDK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ShowUpWatchApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rahilmehta.showup.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		AW000008000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CA796SNXDK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ShowUpWatchApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rahilmehta.showup.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Release;
 		};
@@ -579,8 +736,17 @@
 		AB000004000000000000001 /* Build configuration list for PBXNativeTarget "ShowUpWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AB000007000000000000001 /* Debug (Widget) */,
-				AB000008000000000000001 /* Release (Widget) */,
+				AB000007000000000000001 /* Debug */,
+				AB000008000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AW000004000000000000001 /* Build configuration list for PBXNativeTarget "ShowUpWatchApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AW000007000000000000001 /* Debug */,
+				AW000008000000000000001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -73,6 +73,7 @@ final class TaskViewModel {
         restartMonitoring()
         liveActivity.restoreActivities(matching: tasks)
         locationManager.requestOneTimeFix()
+        WatchConnectivityManager.shared.sendTaskUpdate(tasks)
         print("[TaskVM] Loaded \(tasks.count) tasks | liveActivitiesEnabled=\(liveActivitiesEnabled)")
     }
 
@@ -105,6 +106,7 @@ final class TaskViewModel {
             eightyPercentNotifiedIDs.remove(task.id)
         }
         try? modelContext.save()
+        WatchConnectivityManager.shared.sendTaskUpdate(tasks)
     }
 
     // MARK: - Monitoring
@@ -135,6 +137,7 @@ final class TaskViewModel {
         task.isInsideZone = true
         activeTaskIDs.insert(task.id)
         try? modelContext.save()
+        WatchConnectivityManager.shared.sendTaskUpdate(tasks)
 
         startRefreshTimer() // wake the timer only when someone enters a zone
         if liveActivitiesEnabled { liveActivity.startActivity(for: task) }
@@ -161,6 +164,7 @@ final class TaskViewModel {
 
         if activeTaskIDs.isEmpty { stopRefreshTimer() } // no active zones → kill the timer
         liveActivity.updateActivity(for: task)
+        WatchConnectivityManager.shared.sendTaskUpdate(tasks)
 
         if task.notificationsEnabled {
             notificationManager.sendExitZoneNotification(taskName: task.name)
@@ -256,6 +260,7 @@ final class TaskViewModel {
         }
 
         try? modelContext.save()
+        WatchConnectivityManager.shared.sendTaskUpdate(tasks)
     }
 
     // MARK: - Streak Logic
