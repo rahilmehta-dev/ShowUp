@@ -15,9 +15,14 @@ final class LiveActivityManager {
     func restoreActivities(matching tasks: [ShowUpTask]) {
         for activity in Activity<ShowUpActivityAttributes>.activities {
             guard activity.activityState == .active else { continue }
-            if let task = tasks.first(where: { $0.name == activity.attributes.taskName }) {
+            if let task = tasks.first(where: { $0.name == activity.attributes.taskName }),
+               !task.isCompletedToday {
                 activities[task.id.uuidString] = activity
                 print("[LiveActivity] ♻️ Restored '\(task.name)' id=\(activity.id)")
+            } else {
+                // Orphaned or completed — kill it immediately
+                Task { await activity.end(nil, dismissalPolicy: .immediate) }
+                print("[LiveActivity] 🧹 Ended orphaned activity id=\(activity.id)")
             }
         }
     }
@@ -92,13 +97,12 @@ final class LiveActivityManager {
     }
 
     func endAll() {
-        let snapshot = activities
         activities.removeAll()
         lastUpdateTime.removeAll()
-        for (_, activity) in snapshot {
-            Task {
-                await activity.end(nil, dismissalPolicy: .immediate)
-            }
+        // Use the system list — covers activities started in previous sessions
+        // that aren't in the local dict (the common cause of "stuck" activities)
+        for activity in Activity<ShowUpActivityAttributes>.activities {
+            Task { await activity.end(nil, dismissalPolicy: .immediate) }
         }
         print("[LiveActivity] 🛑 Ended all activities")
     }
