@@ -79,46 +79,10 @@ struct TaskDetailView: View {
                                 Text(task.locationName)
                                     .font(.system(size: 15))
                                     .foregroundColor(.white.opacity(0.6))
-                                Text("• \(Int(task.radius))m radius")
-                                    .font(.system(size: 15))
-                                    .foregroundColor(.white.opacity(0.4))
-                            }
-                        }
-
-                        // Status badge — TimelineView keeps status current
-                        TimelineView(.periodic(from: .now, by: 1.0)) { _ in
-                            let currentStatus: TaskStatus = {
-                                if task.isCompletedToday { return .done }
-                                if task.isInsideZone { return .inProgress }
-                                return .waiting
-                            }()
-                            HStack(spacing: 10) {
-                                Circle()
-                                    .fill(currentStatus.color)
-                                    .frame(width: 10, height: 10)
-                                    .overlay(
-                                        currentStatus == .inProgress ?
-                                        Circle().stroke(currentStatus.color, lineWidth: 2)
-                                            .scaleEffect(1.6)
-                                            .opacity(0.5) : nil
-                                    )
-                                Text(currentStatus.label)
-                                    .font(.system(size: 15, weight: .semibold))
-                                    .foregroundColor(currentStatus.color)
-
-                                Spacer()
-
-                                Text("⚡ \(task.streakCount) day streak")
+                                Text("· \(task.streakCount) day streak")
                                     .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(Color.white.opacity(0.1))
-                                    .clipShape(Capsule())
+                                    .foregroundColor(.white.opacity(0.45))
                             }
-                            .padding(14)
-                            .background(currentStatus.color.opacity(0.1))
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
 
                         // Progress — TimelineView drives live 1-second updates
@@ -155,7 +119,7 @@ struct TaskDetailView: View {
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(.white.opacity(0.7))
 
-                            HStack(spacing: 8) {
+                            HStack(spacing: 0) {
                                 ForEach(Array(streakDays.enumerated()), id: \.offset) { index, completed in
                                     VStack(spacing: 4) {
                                         Circle()
@@ -171,6 +135,7 @@ struct TaskDetailView: View {
                                             .font(.system(size: 10))
                                             .foregroundColor(.white.opacity(0.4))
                                     }
+                                    .frame(maxWidth: .infinity)
                                 }
                             }
                         }

@@ -45,6 +45,7 @@ struct RootView: View {
     @State private var locationManager = LocationManager()
     @State private var notificationManager = NotificationManager()
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var viewModel: TaskViewModel?
 
@@ -68,8 +69,14 @@ struct RootView: View {
                 )
                 viewModel = vm
                 vm.loadTasks()
+                BackgroundTaskManager.shared.onRefresh = { [weak vm] in vm?.resetDailyIfNeeded() }
                 locationManager.requestAlwaysAuthorization()
                 notificationManager.requestAuthorization()
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                viewModel?.resetDailyIfNeeded()
             }
         }
     }

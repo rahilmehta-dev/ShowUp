@@ -110,7 +110,8 @@ extension LocationManager: CLLocationManagerDelegate {
         guard let circularRegion = region as? CLCircularRegion else { return }
 
         if gracePeriodEnabled {
-            // Start a grace period timer before pausing
+            // Invalidate any existing timer for this region before creating a new one
+            gracePeriodTimers[circularRegion.identifier]?.invalidate()
             let timer = Timer.scheduledTimer(withTimeInterval: gracePeriodDuration, repeats: false) { [weak self] _ in
                 self?.gracePeriodTimers.removeValue(forKey: circularRegion.identifier)
                 self?.onExitRegion?(circularRegion.identifier)
@@ -119,6 +120,11 @@ extension LocationManager: CLLocationManagerDelegate {
         } else {
             onExitRegion?(circularRegion.identifier)
         }
+    }
+
+    func cancelAllGracePeriodTimers() {
+        gracePeriodTimers.values.forEach { $0.invalidate() }
+        gracePeriodTimers.removeAll()
     }
 
     func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {

@@ -6,6 +6,8 @@ final class BackgroundTaskManager {
     static let refreshTaskID = "com.showup.app.refresh"
     static let processingTaskID = "com.showup.app.processing"
 
+    var onRefresh: (() -> Void)?
+
     private init() {}
 
     func registerTasks() {
@@ -35,7 +37,7 @@ final class BackgroundTaskManager {
 
     private func handleAppRefresh(task: BGAppRefreshTask) {
         scheduleAppRefresh()
-        // Sync accumulated time for active sessions
+        DispatchQueue.main.async { self.onRefresh?() }
         task.setTaskCompleted(success: true)
     }
 
