@@ -13,6 +13,7 @@ final class TaskViewModel {
     var tasks: [ShowUpTask] = []
     var activeTaskIDs: Set<UUID> = []
     private var refreshTimer: Timer?
+    private var midnightTimer: Timer?
 
     // Settings
     var geofenceRadius: Double = 150
@@ -79,6 +80,7 @@ final class TaskViewModel {
         let descriptor = FetchDescriptor<ShowUpTask>(sortBy: [SortDescriptor(\.createdAt)])
         tasks = (try? modelContext.fetch(descriptor)) ?? []
         resetDailyIfNeeded()
+        scheduleMidnightTimer()
         restartMonitoring()
         liveActivity.restoreActivities(matching: tasks)
         locationManager.requestOneTimeFix()
@@ -107,7 +109,22 @@ final class TaskViewModel {
 
     // MARK: - Daily Reset
 
-    private func resetDailyIfNeeded() {
+    private func scheduleMidnightTimer() {
+        midnightTimer?.invalidate()
+        let calendar = Calendar.current
+        guard let nextMidnight = calendar.nextDate(
+            after: Date(),
+            matching: DateComponents(hour: 0, minute: 0, second: 0),
+            matchingPolicy: .nextTime
+        ) else { return }
+        let interval = nextMidnight.timeIntervalSince(Date())
+        midnightTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
+            self?.resetDailyIfNeeded()
+            self?.scheduleMidnightTimer()
+        }
+    }
+
+    func resetDailyIfNeeded() {
         for task in tasks where task.needsDailyReset {
             task.resetForNewDay()
         }

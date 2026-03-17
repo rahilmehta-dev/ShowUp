@@ -101,20 +101,28 @@ final class ShowUpTask {
     var firstSessionStart: Date? { sessionStarts.first }
 
     var sessionBreakdownText: String {
-        let pastTotal = sessionDurations.reduce(0, +)
+        let rawPastTotal = sessionDurations.reduce(0, +)
         let rawCurrent = currentSessionSeconds
-        // Cap ongoing session so total never exceeds requiredDuration in the display
-        let cappedCurrent = min(rawCurrent, max(0, requiredDuration - pastTotal))
+        let cappedCurrent = min(rawCurrent, max(0, requiredDuration - rawPastTotal))
         let hasOngoing = isInsideZone && cappedCurrent >= 1
         if sessionDurations.isEmpty && !hasOngoing { return "" }
 
-        var parts = sessionDurations.map { formatDuration($0) }
+        // Cap each stored session so the displayed total never exceeds requiredDuration
+        var remaining = requiredDuration
+        var cappedDurations: [Double] = []
+        for d in sessionDurations {
+            let capped = min(d, remaining)
+            cappedDurations.append(capped)
+            remaining = max(0, remaining - capped)
+        }
+
+        var parts = cappedDurations.map { formatDuration($0) }
         if hasOngoing { parts.append(formatDuration(cappedCurrent)) }
 
         if parts.count == 1 {
             return parts[0]
         } else {
-            let sum = pastTotal + (hasOngoing ? cappedCurrent : 0)
+            let sum = min(rawPastTotal, requiredDuration) + (hasOngoing ? cappedCurrent : 0)
             return parts.joined(separator: " + ") + " = " + formatDuration(sum)
         }
     }
