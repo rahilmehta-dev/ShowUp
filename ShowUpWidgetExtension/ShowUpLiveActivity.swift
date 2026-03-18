@@ -10,30 +10,12 @@ struct ShowUpLiveActivity: Widget {
             LockScreenView(context: context)
                 .activityBackgroundTint(Color.black.opacity(0.9))
                 .activitySystemActionForegroundColor(.white)
-        } dynamicIsland: { context in
+        } dynamicIsland: { _ in
             DynamicIsland {
-                // Expanded (long-press on pill)
-                DynamicIslandExpandedRegion(.leading) {
-                    ExpandedLeadingView(context: context)
-                }
-                DynamicIslandExpandedRegion(.trailing) {
-                    ExpandedTrailingView(context: context)
-                }
-                DynamicIslandExpandedRegion(.bottom) {
-                    ExpandedBottomView(context: context)
-                }
+                DynamicIslandExpandedRegion(.leading) { EmptyView() }
             } compactLeading: {
-                if context.state.dynamicIslandEnabled {
-                    CompactRingView(context: context)
-                }
             } compactTrailing: {
-                if context.state.dynamicIslandEnabled {
-                    CompactTrailingView(context: context)
-                }
             } minimal: {
-                if context.state.dynamicIslandEnabled {
-                    MinimalView(context: context)
-                }
             }
         }
     }
@@ -112,138 +94,6 @@ private struct LockScreenView: View {
     }
 }
 
-// MARK: - Dynamic Island: Expanded regions
-private struct ExpandedLeadingView: View {
-    let context: ActivityViewContext<ShowUpActivityAttributes>
-    private var accent: Color { cardColor(context.attributes.cardColorHex) }
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(Color.white.opacity(0.15), lineWidth: 3)
-            Circle()
-                .trim(from: 0, to: context.state.progressFraction)
-                .stroke(
-                    context.state.isCompleted ? Color.green : accent,
-                    style: StrokeStyle(lineWidth: 3, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
-            if context.state.isCompleted {
-                Text("✅").font(.system(size: 14))
-            } else {
-                Text("\(Int(context.state.progressFraction * 100))%")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(.white)
-            }
-        }
-        .frame(width: 38, height: 38)
-        .padding(.leading, 4)
-    }
-}
-
-private struct ExpandedTrailingView: View {
-    let context: ActivityViewContext<ShowUpActivityAttributes>
-
-    var body: some View {
-        VStack(alignment: .trailing, spacing: 1) {
-            Text(formatElapsed(context.state.elapsedSeconds))
-                .font(.system(size: 14, weight: .bold, design: .monospaced))
-                .foregroundStyle(.white)
-            Text("/ \(Int(context.state.requiredSeconds / 60))m")
-                .font(.system(size: 10))
-                .foregroundStyle(.white.opacity(0.5))
-        }
-        .padding(.trailing, 4)
-    }
-}
-
-private struct ExpandedBottomView: View {
-    let context: ActivityViewContext<ShowUpActivityAttributes>
-    private var accent: Color { cardColor(context.attributes.cardColorHex) }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text(context.attributes.taskName)
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
-                Spacer()
-                HStack(spacing: 4) {
-                    Image(systemName: statusIcon(context.state))
-                        .font(.system(size: 10))
-                    Text(statusLabel(context.state))
-                        .font(.system(size: 11))
-                }
-                .foregroundStyle(statusColor(context.state, accent: accent))
-            }
-            liveBar(context: context, accent: accent)
-                .frame(height: 5)
-        }
-        .padding(.horizontal, 12)
-        .padding(.bottom, 10)
-    }
-}
-
-// MARK: - Dynamic Island: Compact + Minimal
-private struct CompactRingView: View {
-    let context: ActivityViewContext<ShowUpActivityAttributes>
-    private var accent: Color { cardColor(context.attributes.cardColorHex) }
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(Color.white.opacity(0.2), lineWidth: 2.5)
-            Circle()
-                .trim(from: 0, to: context.state.progressFraction)
-                .stroke(
-                    context.state.isCompleted ? Color.green : accent,
-                    style: StrokeStyle(lineWidth: 2.5, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
-        }
-        .frame(width: 20, height: 20)
-        .padding(.leading, 4)
-    }
-}
-
-private struct CompactTrailingView: View {
-    let context: ActivityViewContext<ShowUpActivityAttributes>
-    private var accent: Color { cardColor(context.attributes.cardColorHex) }
-
-    var body: some View {
-        if context.state.isCompleted {
-            Text("Done! ✅")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.green)
-        } else {
-            Text(compactTimeLabel(context.state))
-                .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                .foregroundStyle(context.state.isInsideZone ? accent : .white.opacity(0.6))
-        }
-    }
-}
-
-private struct MinimalView: View {
-    let context: ActivityViewContext<ShowUpActivityAttributes>
-    private var accent: Color { cardColor(context.attributes.cardColorHex) }
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(Color.white.opacity(0.2), lineWidth: 2)
-            Circle()
-                .trim(from: 0, to: context.state.progressFraction)
-                .stroke(
-                    context.state.isCompleted ? Color.green : accent,
-                    style: StrokeStyle(lineWidth: 2, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
-        }
-        .frame(width: 16, height: 16)
-    }
-}
-
 // MARK: - Shared helpers
 
 /// Live progress bar: uses timerInterval for smooth animation when in zone
@@ -317,8 +167,3 @@ private func formatElapsed(_ seconds: Double) -> String {
     return String(format: "%d:%02d", m, s)
 }
 
-private func compactTimeLabel(_ state: ShowUpActivityAttributes.ContentState) -> String {
-    let remaining = max(0, state.requiredSeconds - state.elapsedSeconds)
-    let m = Int(remaining) / 60
-    return m > 0 ? "\(m)m left" : "< 1m"
-}

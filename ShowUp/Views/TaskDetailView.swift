@@ -82,6 +82,15 @@ struct TaskDetailView: View {
                                 Text("· \(task.streakCount) day streak")
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(.white.opacity(0.45))
+                                Spacer()
+                                let status: TaskStatus = task.isCompletedToday ? .done : task.isInsideZone ? .inProgress : .waiting
+                                Text(status.label)
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(status.color)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4)
+                                    .background(status.color.opacity(0.15))
+                                    .clipShape(Capsule())
                             }
                         }
 
@@ -146,7 +155,6 @@ struct TaskDetailView: View {
                         // Task details
                         HStack(spacing: 16) {
                             DetailChip(icon: "timer", label: "Duration", value: task.durationText)
-                            DetailChip(icon: "circle.dashed", label: "Radius", value: "\(Int(task.radius))m")
                             DetailChip(icon: "calendar", label: "Created", value: formatDate(task.createdAt))
                         }
 
@@ -261,15 +269,15 @@ enum TaskStatus {
 
     var label: String {
         switch self {
-        case .waiting: return "Waiting"
+        case .waiting: return "Pending"
         case .inProgress: return "In Progress"
-        case .done: return "Done ✅"
+        case .done: return "Done"
         }
     }
 
     var color: Color {
         switch self {
-        case .waiting: return .white.opacity(0.5)
+        case .waiting: return .gray
         case .inProgress: return .orange
         case .done: return .green
         }

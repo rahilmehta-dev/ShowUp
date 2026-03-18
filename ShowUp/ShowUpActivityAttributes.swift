@@ -14,7 +14,6 @@ struct ShowUpActivityAttributes: ActivityAttributes {
         // ProgressView(timerInterval: liveStart...liveEnd) animates automatically
         var liveProgressStart: Date?    // = Date() - elapsedSeconds
         var liveProgressEnd: Date?      // = Date() + remainingSeconds
-        var dynamicIslandEnabled: Bool  // false = hide compact/minimal pill
     }
 
     // MARK: - Static per-task info

@@ -85,17 +85,6 @@ struct SettingsView: View {
                                     set: { viewModel.setLiveActivitiesEnabled($0) }
                                 )
                             )
-                            Divider().background(Color.white.opacity(0.08))
-                            SettingsToggleRow(
-                                icon: "capsule.fill",
-                                iconColor: .cyan,
-                                title: "Dynamic Island",
-                                subtitle: "Show timer pill in Dynamic Island",
-                                isOn: Binding(
-                                    get: { viewModel.dynamicIslandEnabled },
-                                    set: { viewModel.setDynamicIslandEnabled($0) }
-                                )
-                            )
                         }
 
                         // Per-task notifications

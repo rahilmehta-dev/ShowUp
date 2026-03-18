@@ -263,7 +263,7 @@ struct TaskCardView: View {
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.black.opacity(0.5))
 
-                        // Start time (first zone entry today)
+                        // Start time, and actual end time once completed
                         if let start = task.firstSessionStart {
                             Text("·")
                                 .font(.system(size: 11))
@@ -273,6 +273,12 @@ struct TaskCardView: View {
                                     .font(.system(size: 10))
                                 Text(start, style: .time)
                                     .font(.system(size: 11, weight: .medium))
+                                if let end = task.completedAt {
+                                    Text("–")
+                                        .font(.system(size: 11))
+                                    Text(end, style: .time)
+                                        .font(.system(size: 11, weight: .medium))
+                                }
                             }
                             .foregroundColor(.black.opacity(0.5))
                         }

@@ -3,7 +3,6 @@ import Foundation
 
 final class LiveActivityManager {
     private var activities: [String: Activity<ShowUpActivityAttributes>] = [:]
-    var dynamicIslandEnabled: Bool = false
     // Throttle updates — ProgressView(timerInterval:) animates between them
     private var lastUpdateTime: [String: Date] = [:]
     private let updateInterval: TimeInterval = 5
@@ -131,8 +130,7 @@ final class LiveActivityManager {
             requiredSeconds: required,
             streakCount: task.streakCount,
             liveProgressStart: liveStart,
-            liveProgressEnd: liveEnd,
-            dynamicIslandEnabled: dynamicIslandEnabled
+            liveProgressEnd: liveEnd
         )
     }
 }

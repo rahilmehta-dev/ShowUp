@@ -67,7 +67,7 @@ final class NotificationManager: NSObject {
     func sendCompletionNotification(taskName: String, streak: Int) {
         send(
             id: "complete_\(taskName)_\(Date().timeIntervalSince1970)",
-            title: "✅ \(taskName) complete!",
+            title: "\(taskName) complete!",
             body: "Streak: \(streak) day\(streak == 1 ? "" : "s") 🔥"
         )
     }

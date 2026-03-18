@@ -28,6 +28,9 @@ final class ShowUpTask {
     var isCompletedToday: Bool
     var lastResetDate: Date?
 
+    // Actual completion timestamp (set when task completes, cleared on daily reset)
+    var completedAt: Date?
+
     // Session history (reset each day)
     var sessionStarts: [Date] = []
     var sessionDurations: [Double] = []
@@ -61,8 +64,10 @@ final class ShowUpTask {
         self.lastResetDate = Calendar.current.startOfDay(for: Date())
     }
 
-    var isScheduledToday: Bool {
-        let weekday = Calendar.current.component(.weekday, from: Date())
+    var isScheduledToday: Bool { isScheduled(on: Date()) }
+
+    func isScheduled(on date: Date, calendar: Calendar = .current) -> Bool {
+        let weekday = calendar.component(.weekday, from: date)
         return scheduledDays.isEmpty || scheduledDays.contains(weekday)
     }
 
@@ -140,6 +145,7 @@ final class ShowUpTask {
         lastEnteredAt = nil
         isInsideZone = false
         isCompletedToday = false
+        completedAt = nil
         lastResetDate = Calendar.current.startOfDay(for: Date())
         sessionStarts = []
         sessionDurations = []
